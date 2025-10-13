@@ -1703,6 +1703,14 @@ void emit_HLSL_TEXLD(Context *ctx)
             return;
         } // if
 
+	const char *projsep = "";
+	char proj[64] = { '\0' };
+	if (ctx->instruction_controls == CONTROL_TEXLDP)
+	{
+            projsep = " / ";
+            make_HLSL_srcarg_string_w(ctx, 0, proj, sizeof (proj));
+	} // if
+
         // !!! FIXME: does the d3d bias value map directly to HLSL?
         const char *biassep = "";
         char bias[64] = { '\0' };
@@ -1742,8 +1750,8 @@ void emit_HLSL_TEXLD(Context *ctx)
 
         char code[128];
         make_HLSL_destarg_assign(ctx, code, sizeof (code),
-                                 "%s_texture.%s(%s, %s%s%s)%s", src1, funcname,
-                                 src1, src0, biassep, bias, swiz_str);
+                                 "%s_texture.%s(%s, %s%s%s%s%s)%s", src1, funcname,
+                                 src1, src0, projsep, proj, biassep, bias, swiz_str);
 
         output_line(ctx, "%s", code);
     } // else
