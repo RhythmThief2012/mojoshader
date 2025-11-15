@@ -26,6 +26,13 @@ jobs:
     - name: Get MojoShader sources
       uses: actions/checkout@v3
     - name: Configure CMake
-      run: cmake -B build ${{ matrix.platform.flags }}
+      run: cmake -B build ${{ matrix.platform.flags }} -DBUILD_SHARED_LIBS=ON
     - name: Build
-      run: cmake --build build/
+      run: cmake --build build --config Release
+    - name: Upload Windows DLL artifact
+      if: runner.os == 'Windows'
+      uses: actions/upload-artifact@v4
+      with:
+        name: mojoshader-windows
+        path: build/Release/mojoshader.dll
+        if-no-files-found: error
